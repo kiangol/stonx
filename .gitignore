@@ -1,2 +1,6 @@
 # Project exclude paths
 /venv/
+.DS_Store
+.txt
+.idea
+.idea/*
