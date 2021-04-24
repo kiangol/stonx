@@ -12,4 +12,7 @@ class Asset:
         self.amount -= amount
         self.value -= price * amount
 
-
+    def __str__(self):
+        return f"Ticker: {self.name}\n" \
+               f"Amount: {self.amount}\n" \
+               f"Value:  {self.value}\n"
