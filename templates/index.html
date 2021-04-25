@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock %}
+
+{% block content %}
+
+<form class="d-flex", action="/upload", method="POST", enctype="multipart/form-data">
+    <input type="file" class="form-control-file" name="uploaded_file" id="exampleFormControlFile1" placeholder="Velg fil">
+    <button class="btn btn-outline-success" type="submit">Upload</button>
+  </form>
+{% endblock %}

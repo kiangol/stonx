@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock %}
+
+{% block content %}
+
+<h2>{{status}}</h2>
+
+{% for table in tables %}
+            {{titles[loop.index]}}
+            {{ table|safe }}
+{% endfor %}
+
+<p>Total verdi: {{ total_value }}</p>
+
+{% endblock %}
