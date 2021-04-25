@@ -27,7 +27,7 @@ for index, row in df.iterrows():
         a = Asset(ticker)
         pf.add_asset(a)
         pf_asset = pf.get_asset(ticker)
-        pf_asset.buy(amount, kurs * vekslingskurs) if belop > 0 else pf_asset.sell(amount, kurs * vekslingskurs)
+        pf_asset.buy(amount, kurs * vekslingskurs) if belop < 0 else pf_asset.sell(amount, kurs * vekslingskurs)
 
     if transaksjonstype == 'INNSKUDD' or transaksjonstype == 'UTTAK INTERNET':
         if transaksjonstype == 'INNSKUDD':
