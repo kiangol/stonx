@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve stonx
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/stonx
+Environment="PATH=/home/ubuntu/stonx/stonx/bin"
+ExecStart=/home/ubuntu/stonx/stonx/bin/gunicorn --workers 3 --bind unix:myproject.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
