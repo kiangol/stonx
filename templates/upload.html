@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
+    StonX - Last opp
 {% endblock %}
 
 {% block content %}
@@ -7,10 +8,11 @@
 <h2>{{status}}</h2>
 
 {% for table in tables %}
-            {{titles[loop.index]}}
-            {{ table|safe }}
+    {{ table|safe }}
 {% endfor %}
 
 <p>Total verdi: {{ total_value }}</p>
-
+    <p>Sum innskudd: {{ deposits }}</p>
+    <p>Sum uttak: {{ withdrawals }}</p>
+<button type="button" class="btn btn-primary">Gå videre</button>
 {% endblock %}

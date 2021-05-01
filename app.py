@@ -1,3 +1,5 @@
+import re
+
 from flask import Flask, render_template, request, redirect
 from portfolio import Portfolio
 from asset import Asset
@@ -26,8 +28,7 @@ def allowed_filetype(filename):
     Returns:
         boolean: True if file is allowed, else False
     """
-
-    if not '.' in filename:
+    if '.' not in filename:
         return False
 
     ext = filename.rsplit('.', 1)[1]
@@ -37,6 +38,7 @@ def allowed_filetype(filename):
 def create_portfolio(data):
     print("CREATING PORTFOLIO")
     pf = Portfolio()
+
     for index, row in data.iterrows():
         ticker = row['Verdipapir']
         amount = float(row['Antall'].replace(',', '.').replace(' ', ''))
@@ -45,18 +47,18 @@ def create_portfolio(data):
         transaksjonstype = row['Transaksjonstype']
         belop = float(row['Beløb'].replace(',', '.').replace(' ', ''))
 
-        if transaksjonstype == 'KJØPT' or transaksjonstype == 'SALG':
-            a = Asset(ticker)
-            pf.add_asset(a)
-            pf_asset = pf.get_asset(ticker)
-            pf_asset.buy(amount, kurs * vekslingskurs) if belop < 0 else pf_asset.sell(amount, kurs * vekslingskurs)
-
+        # Deposit and withdraw cash
         if transaksjonstype == 'INNSKUDD' or transaksjonstype == 'UTTAK INTERNET':
             if transaksjonstype == 'INNSKUDD':
-                print(f"DEPOSIT: {belop}")
                 pf.deposit(belop)
+            if transaksjonstype == 'UTTAK INTERNET':
+                pf.withdraw(belop)
 
-        return pf
+        if transaksjonstype == 'KJØPT' or transaksjonstype == 'SALG':
+            a = Asset(ticker)
+            pf.buy(a, amount, (kurs * vekslingskurs)) if belop < 0 else pf.sell(a, amount, (kurs * vekslingskurs))
+
+    return pf
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -78,21 +80,30 @@ def upload_file():
                 filename = secure_filename(file_uploaded.filename)
                 file_uploaded.save(os.path.join(app.config['UPLOAD_DIR'], filename))
 
-
-            columns = ['Verdipapir', 'Transaksjonstype', 'Antall', 'Kurs', 'Beløb', 'Kjøpsverdi', 'Resultat', 'Vekslingskurs']
-            filename = 'transactions.csv'
-            df = pd.read_csv(os.path.join(app.config['UPLOAD_DIR'], filename), usecols=columns, delimiter='\t', encoding='utf-16')
+            columns = ['Handelsdag', 'Transaksjonstype', 'Antall', 'Verdipapir', 'Kurs', 'Beløb', 'Kjøpsverdi', 'Resultat',
+                       'Vekslingskurs']
+            df = pd.read_csv(os.path.join(app.config['UPLOAD_DIR'], filename), usecols=columns, delimiter='\t',
+                             encoding='utf-16')
+            df = df.iloc[::-1]
 
             pf = create_portfolio(df)
+            # print(pf)
+            # for a in pf.get_assets():
+            #     print(a)
+            df_html = df.to_html(index=False, justify='left', col_space='1px', na_rep='N/A')
+            html_table = re.sub('border=\"1\" class=\"dataframe\"',
+                                'class=\"table table-bordered table-dark table-hover\"',
+                                df_html)
 
+            print(html_table)
             return render_template('upload.html',
                                    status=f"Uploaded {filename}",
-                                   tables=[df.to_html(classes='data')],
+                                   tables=[html_table],
                                    titles=df.columns.values,
-                                   total_value=pf.get_equity()
+                                   total_value=f"{pf.get_portfolio_value():.2f} NOK",
+                                   deposits=f"{sum(pf.deposits)}",
+                                   withdrawals=f"{abs(sum(pf.withdrawals))}",
                                    )
-            # return redirect(request.url)
-    # return df.to_html()
 
 
 if __name__ == '__main__':
