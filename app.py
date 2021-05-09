@@ -12,6 +12,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
+    import os
+    if not os.path.exists('transaction_files'):
+        os.makedirs('transaction_files')
     return render_template('index.html', content="Welcome to StonX!")
 
 
@@ -78,11 +81,13 @@ def upload_file():
 
             else:
                 filename = secure_filename(file_uploaded.filename)
-                file_uploaded.save(os.path.join(app.config['UPLOAD_DIR'], filename))
+                dir1 = os.getcwd()
+                target_dir = dir1 + '/transaction_files'
+                file_uploaded.save(os.path.join(target_dir, filename))
 
             columns = ['Handelsdag', 'Transaksjonstype', 'Antall', 'Verdipapir', 'Kurs', 'Beløb', 'Kjøpsverdi', 'Resultat',
                        'Vekslingskurs']
-            df = pd.read_csv(os.path.join(app.config['UPLOAD_DIR'], filename), usecols=columns, delimiter='\t',
+            df = pd.read_csv(os.path.join(target_dir, filename), usecols=columns, delimiter='\t',
                              encoding='utf-16')
 
             df = df.iloc[::-1]
@@ -94,7 +99,6 @@ def upload_file():
                                 'class=\"table table-bordered table-dark table-hover\"',
                                 df_html)
 
-            print(html_table)
             return render_template('upload.html',
                                    status=f"Uploaded {filename}",
                                    tables=[html_table],
