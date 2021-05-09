@@ -4,15 +4,19 @@
 {% endblock %}
 
 {% block content %}
+    <div class="container">
 
-<h2>{{status}}</h2>
+        <h2>{{status}}</h2>
 
-{% for table in tables %}
-    {{ table|safe }}
-{% endfor %}
+        {% for table in tables %}
+            {{ table|safe }}
+        {% endfor %}
 
-<p>Total verdi: {{ total_value }}</p>
-    <p>Sum innskudd: {{ deposits }}</p>
-    <p>Sum uttak: {{ withdrawals }}</p>
-<button type="button" class="btn btn-primary">Gå videre</button>
+        <p>Total verdi: {{ total_value }}</p>
+        <p>Sum innskudd: {{ deposits }}</p>
+        <p>Sum uttak: {{ withdrawals }}</p>
+        <button type="button" class="btn btn-primary w-100">Gå videre</button>
+        <br>
+        <br>
+    </div>
 {% endblock %}

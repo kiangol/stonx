@@ -84,13 +84,12 @@ def upload_file():
                        'Vekslingskurs']
             df = pd.read_csv(os.path.join(app.config['UPLOAD_DIR'], filename), usecols=columns, delimiter='\t',
                              encoding='utf-16')
+
             df = df.iloc[::-1]
 
             pf = create_portfolio(df)
-            # print(pf)
-            # for a in pf.get_assets():
-            #     print(a)
-            df_html = df.to_html(index=False, justify='left', col_space='1px', na_rep='N/A')
+
+            df_html = df.to_html(index=False, justify='left', col_space='1px', na_rep='')
             html_table = re.sub('border=\"1\" class=\"dataframe\"',
                                 'class=\"table table-bordered table-dark table-hover\"',
                                 df_html)
