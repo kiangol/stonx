@@ -9,15 +9,14 @@
         <hr class="my-4">
         <form class="d-flex" action="/upload" method="POST" enctype="multipart/form-data">
             <div class="jumbotron">
-                <p>1: Velg fil</p>
-                <input type="file" class="form-control-file" name="uploaded_file" id="exampleFormControlFile1" placeholder="Velg fil">
+                <input type="file" class="form-control" name="uploaded_file" />
                 <br>
                 <br>
-                <p>2: Trykk her</p>
+                <p>{{ errormsg }}</p>
                 <button class="btn btn btn-primary w-100" type="submit">Last opp</button>
                 <br>
                 <br>
-                <a class="btn btn-outline-primary" href="#" role="button">Hjelp</a>
+                <a class="btn btn-outline-primary" href="/help" role="button">Hjelp</a>
             </div>
         </form>
     </div>

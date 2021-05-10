@@ -17,6 +17,10 @@ def hello_world():
         os.makedirs('transaction_files')
     return render_template('index.html', content="Welcome to StonX!")
 
+@app.route('/help')
+def help():
+    return render_template('help.html')
+
 
 app.config["UPLOAD_DIR"] = '/Users/kian/PycharmProjects/stonx/static/csv/uploads'
 app.config["ALLOWED_EXT"] = ['CSV', 'TXT']
@@ -67,6 +71,9 @@ def create_portfolio(data):
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        if not request.files.get('uploaded_file', None):
+            return render_template('index.html',
+                                   errormsg="Ingen fil valgt, velg fil først")
         if request.files:
 
             file_uploaded = request.files['uploaded_file']
@@ -107,6 +114,7 @@ def upload_file():
                                    deposits=f"{sum(pf.deposits)}",
                                    withdrawals=f"{abs(sum(pf.withdrawals))}",
                                    )
+
 
 
 if __name__ == '__main__':
